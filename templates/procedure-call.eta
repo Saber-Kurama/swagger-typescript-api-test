@@ -20,7 +20,11 @@ const requestConfigParam = {
 }
 
 const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
-
+console.log('config.extractRequestParams ',requestParams && {
+          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
+          optional: false,
+          type: getInlineParseContent(requestParams),
+        }, )
 const rawWrapperArgs = config.extractRequestParams ?
     _.compact([
         requestParams && {
@@ -76,7 +80,7 @@ const describeReturnType = () => {
         }
     }
 }
-
+console.log('route.routeName.usage', wrapperArgs)
 %>
 /**
 <%~ routeDocs.description %>

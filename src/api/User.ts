@@ -10,9 +10,14 @@
  */
 
 // 自定义的api
-
+/**
+Order, Category, User, Tag, PetNames, PetIds, PetIdsWithWrongEnum, Pet, ApiResponse, Amount, Currency*/
 import { Currency, User } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
+/**
+ * 获取 tag的描述
+ * routeDocs.lines
+ */
 export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * @description This can only be done by the logged in user.

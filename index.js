@@ -17,6 +17,7 @@ generateApi({
   modular: true,
   defaultResponseType: "void",
   moduleNameFirstTag: true,
+  extractRequestParams: true, // path 和 query 合并
   hooks: {
     onCreateComponent: (component) => {
       // console.log('component----', component)
@@ -33,10 +34,14 @@ generateApi({
     onCreateRouteName: (routeNameInfo, rawRouteInfo) => {},
     onFormatRouteName: (routeInfo, templateRouteName) => {},
     onFormatTypeName: (typeName, rawTypeName) => {},
-    onInit: (configuration) => {},
+    onInit: (configuration) => {
+      // console.log('configuration', configuration)
+      // TODO: 解决一下  tags 中文的问题
+      return configuration; 
+    },
     onParseSchema: (originalSchema, parsedSchema) => {},
     onPrepareConfig: (currentConfiguration) => {
-      // console.log('currentConfiguration', currentConfiguration.routes.combined[0])
+      // console.log('currentConfiguration', currentConfiguration.modelTypes)
       return currentConfiguration;
     }
   }

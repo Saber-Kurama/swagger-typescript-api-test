@@ -10,9 +10,14 @@
  */
 
 // 自定义的api
-
+/**
+Order, Category, User, Tag, PetNames, PetIds, PetIdsWithWrongEnum, Pet, ApiResponse, Amount, Currency*/
 import { Order } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
+/**
+ * 获取 tag的描述
+ * routeDocs.lines
+ */
 export class Store<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * @description Returns a map of status codes to quantities
