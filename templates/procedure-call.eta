@@ -3,11 +3,22 @@ const { utils, route, config } = it;
 const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
 const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
 const { parameters, path, method, payload, query, formData, security, requestParams } = route.request;
+// parameters 参数
+// path 路径
+// payload body 中的参数
+// query // query
+// formData //
+// security
+// requestParams  这个是 path 和 query 的合并起来的数据
+// pathParams path 参数 
 const { type, errorType, contentTypes } = route.response;
 const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
+// query
 const queryName = (query && query.name) || "query";
+// pathParams 来自 parameters 看起来是和 pathParams 一样 
 const pathParams = _.values(parameters);
+// 形成参数
 const pathParamsNames = _.map(pathParams, "name");
 
 const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
@@ -20,11 +31,13 @@ const requestConfigParam = {
 }
 
 const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
-console.log('config.extractRequestParams ',requestParams && {
-          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
-          optional: false,
-          type: getInlineParseContent(requestParams),
-        }, )
+console.log('path', path)
+if(path === '/legacy/repos/search/${keyword}') {
+console.log('route.request', route.request)
+console.log('requestParams', requestParams && _.get(requestParams, "schemas"))
+console.log('getInlineParseContent(requestParams)', requestParams && getInlineParseContent(requestParams))
+}
+// extractRequestParams querey 和 pathParams 合并，没有的话 就不合并 
 const rawWrapperArgs = config.extractRequestParams ?
     _.compact([
         requestParams && {
@@ -42,7 +55,7 @@ const rawWrapperArgs = config.extractRequestParams ?
         payload,
         requestConfigParam,
     ])
-
+// console.log('rawWrapperArgs----', rawWrapperArgs);
 const wrapperArgs = _
     // Sort by optionality
     .sortBy(rawWrapperArgs, [o => o.optional])
@@ -80,7 +93,7 @@ const describeReturnType = () => {
         }
     }
 }
-console.log('route.routeName.usage', wrapperArgs)
+// console.log('route.routeName.usage', wrapperArgs)
 %>
 /**
 <%~ routeDocs.description %>

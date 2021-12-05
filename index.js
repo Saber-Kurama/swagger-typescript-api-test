@@ -9,7 +9,7 @@ const { generateApi } = require('swagger-typescript-api');
 const path = require("path");
 const fs = require("fs");
 generateApi({
-  url: 'http://127.0.0.1:5000/another-example.json',
+  url: 'http://localhost:5000/github-swagger.json',
   name: "MySuperbApi.ts",
   output: path.resolve(process.cwd(), './src/api'),
   templates: path.resolve(process.cwd(), './templates'),
