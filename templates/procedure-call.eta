@@ -9,7 +9,7 @@ const { parameters, path, method, payload, query, formData, security, requestPar
 // query // query
 // formData //
 // security
-// requestParams  这个是 path 和 query 的合并起来的数据
+// requestParams  这个是 path 和 query 的合并起来的数据, 这个是是只有query 和 path 都有的情况
 // pathParams path 参数 
 const { type, errorType, contentTypes } = route.response;
 const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
@@ -31,11 +31,14 @@ const requestConfigParam = {
 }
 
 const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
-console.log('path', path)
+// console.log('path', route.request)
+if(route.request.query){
+    console.log(route.request)
+}
 if(path === '/legacy/repos/search/${keyword}') {
-console.log('route.request', route.request)
-console.log('requestParams', requestParams && _.get(requestParams, "schemas"))
-console.log('getInlineParseContent(requestParams)', requestParams && getInlineParseContent(requestParams))
+// console.log('route.request', route.request)
+// console.log('requestParams', requestParams && _.get(requestParams, "schemas"))
+// console.log('getInlineParseContent(requestParams)', requestParams && getInlineParseContent(requestParams))
 }
 // extractRequestParams querey 和 pathParams 合并，没有的话 就不合并 
 const rawWrapperArgs = config.extractRequestParams ?
