@@ -12,37 +12,26 @@
 // 自定义的api
 /**
 Actor, Asset, AssetPatch, Assets, Assignees, Blob, Blobs, Branch, Branches, CodeFrequencyStats, Comment, CommentBody, Comments, Commit, CommitActivityStats, CommitComment, CommitCommentBody, Commits, CompareCommits, ContentsPath, ContributorsStats, CreateFile, CreateFileBody, DeleteFile, DeleteFileBody, Deployment, DeploymentResp, DeploymentStatuses, DeploymentStatusesCreate, Download, Downloads, EditTeam, EmailsPost, Emojis, Event, Events, Feeds, ForkBody, Forks, Gist, Gists, GitCommit, GitRefPatch, Gitignore, GitignoreLang, HeadBranch, Hook, HookBody, Issue, IssueEvent, IssueEvents, Issues, IssuesComment, IssuesComments, Keys, Label, Labels, Languages, Markdown, Merge, MergePullBody, MergesBody, MergesConflict, MergesSuccessful, Meta, Milestone, MilestoneUpdate, NotificationMarkRead, Notifications, OrgTeamsPost, Organization, OrganizationAsTeamMember, ParticipationStats, PatchGist, PatchOrg, PostGist, PostRepo, PullRequest, PullUpdate, Pulls, PullsComment, PullsCommentPost, PullsComments, PullsPost, PutSubscription, RateLimit, Ref, RefStatus, Refs, RefsBody, Release, ReleaseCreate, Releases, Repo, RepoDeployments, RepoComments, RepoCommit, RepoCommitBody, RepoEdit, Repos, SearchCode, SearchIssues, SearchIssuesByKeyword, SearchRepositories, SearchRepositoriesByKeyword, SearchUserByEmail, SearchUsers, SearchUsersByKeyword, Subscription, SubscriptionBody, Tag, TagBody, Tags, Team, TeamMembership, TeamRepos, Teams, TeamsList, Tree, Trees, User, UserEmails, UserKeysKeyId, UserKeysPost, UserUpdate, Users*/
-import {
-  EmailsPost,
-  Gitignore,
-  Issues,
-  PostRepo,
-  Repos,
-  TeamsList,
-  User,
-  UserEmails,
-  UserKeysKeyId,
-  UserKeysPost,
-  Users,
-  UserUpdate,
-} from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import http from "@/utils/http";
+import { AxiosRequestConfig } from "axios";
+import defs from "./data-contracts";
+
 /**
  * 获取 tag的描述
  * routeDocs.lines
  */
-export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class User {
   /**
    * @description Get the authenticated user.
    *
    * @name UserList
    * @request GET:/user
    */
-  userList = (params: RequestParams = {}) =>
-    this.request<User, void>({
-      path: `/user`,
+  userList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.User>({
+      url: `/user`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -51,13 +40,13 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name UserPartialUpdate
    * @request PATCH:/user
    */
-  userPartialUpdate = (body: UserUpdate, params: RequestParams = {}) =>
-    this.request<User, void>({
-      path: `/user`,
+  userPartialUpdate = (body: UserUpdate, params: AxiosRequestConfig = {}) =>
+    http.request<defs.User>({
+      url: `/user`,
       method: "PATCH",
       body: body,
       type: ContentType.Json,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -66,9 +55,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name EmailsDelete
    * @request DELETE:/user/emails
    */
-  emailsDelete = (body: UserEmails, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/emails`,
+  emailsDelete = (body: UserEmails, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/emails`,
       method: "DELETE",
       body: body,
       type: ContentType.Json,
@@ -80,9 +69,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name EmailsList
    * @request GET:/user/emails
    */
-  emailsList = (params: RequestParams = {}) =>
-    this.request<UserEmails, void>({
-      path: `/user/emails`,
+  emailsList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.UserEmails>({
+      url: `/user/emails`,
       method: "GET",
       ...params,
     });
@@ -92,9 +81,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name EmailsCreate
    * @request POST:/user/emails
    */
-  emailsCreate = (body: EmailsPost, params: RequestParams = {}) =>
-    this.request<any, void>({
-      path: `/user/emails`,
+  emailsCreate = (body: EmailsPost, params: AxiosRequestConfig = {}) =>
+    http.request<defs.any>({
+      url: `/user/emails`,
       method: "POST",
       body: body,
       ...params,
@@ -105,11 +94,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name FollowersList
    * @request GET:/user/followers
    */
-  followersList = (params: RequestParams = {}) =>
-    this.request<Users, void>({
-      path: `/user/followers`,
+  followersList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.Users>({
+      url: `/user/followers`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -118,11 +107,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name FollowingList
    * @request GET:/user/following
    */
-  followingList = (params: RequestParams = {}) =>
-    this.request<Users, void>({
-      path: `/user/following`,
+  followingList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.Users>({
+      url: `/user/following`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -131,9 +120,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name FollowingDelete
    * @request DELETE:/user/following/{username}
    */
-  followingDelete = (username: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/following/${username}`,
+  followingDelete = (username: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/following/${username}`,
       method: "DELETE",
       ...params,
     });
@@ -143,9 +132,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name FollowingDetail
    * @request GET:/user/following/{username}
    */
-  followingDetail = (username: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/following/${username}`,
+  followingDetail = (username: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/following/${username}`,
       method: "GET",
       ...params,
     });
@@ -155,9 +144,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name FollowingUpdate
    * @request PUT:/user/following/{username}
    */
-  followingUpdate = (username: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/following/${username}`,
+  followingUpdate = (username: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/following/${username}`,
       method: "PUT",
       ...params,
     });
@@ -176,13 +165,13 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
       direction: "asc" | "desc";
       since?: string;
     },
-    params: RequestParams = {},
+    params: AxiosRequestConfig = {},
   ) =>
-    this.request<Issues, void>({
-      path: `/user/issues`,
+    http.request<defs.Issues>({
+      url: `/user/issues`,
       method: "GET",
       query: query,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -191,11 +180,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name KeysList
    * @request GET:/user/keys
    */
-  keysList = (params: RequestParams = {}) =>
-    this.request<Gitignore, void>({
-      path: `/user/keys`,
+  keysList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.Gitignore>({
+      url: `/user/keys`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -204,12 +193,12 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name KeysCreate
    * @request POST:/user/keys
    */
-  keysCreate = (body: UserKeysPost, params: RequestParams = {}) =>
-    this.request<UserKeysKeyId, void>({
-      path: `/user/keys`,
+  keysCreate = (body: UserKeysPost, params: AxiosRequestConfig = {}) =>
+    http.request<defs.UserKeysKeyId>({
+      url: `/user/keys`,
       method: "POST",
       body: body,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -218,9 +207,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name KeysDelete
    * @request DELETE:/user/keys/{keyId}
    */
-  keysDelete = (keyId: number, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/keys/${keyId}`,
+  keysDelete = (keyId: number, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/keys/${keyId}`,
       method: "DELETE",
       ...params,
     });
@@ -230,11 +219,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name KeysDetail
    * @request GET:/user/keys/{keyId}
    */
-  keysDetail = (keyId: number, params: RequestParams = {}) =>
-    this.request<UserKeysKeyId, void>({
-      path: `/user/keys/${keyId}`,
+  keysDetail = (keyId: number, params: AxiosRequestConfig = {}) =>
+    http.request<defs.UserKeysKeyId>({
+      url: `/user/keys/${keyId}`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -243,11 +232,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name OrgsList
    * @request GET:/user/orgs
    */
-  orgsList = (params: RequestParams = {}) =>
-    this.request<Gitignore, void>({
-      path: `/user/orgs`,
+  orgsList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.Gitignore>({
+      url: `/user/orgs`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -258,13 +247,13 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    */
   reposList = (
     query: { type?: "all" | "public" | "private" | "forks" | "sources" | "member" },
-    params: RequestParams = {},
+    params: AxiosRequestConfig = {},
   ) =>
-    this.request<Repos, void>({
-      path: `/user/repos`,
+    http.request<defs.Repos>({
+      url: `/user/repos`,
       method: "GET",
       query: query,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -273,12 +262,12 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name ReposCreate
    * @request POST:/user/repos
    */
-  reposCreate = (body: PostRepo, params: RequestParams = {}) =>
-    this.request<Repos, void>({
-      path: `/user/repos`,
+  reposCreate = (body: PostRepo, params: AxiosRequestConfig = {}) =>
+    http.request<defs.Repos>({
+      url: `/user/repos`,
       method: "POST",
       body: body,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -287,12 +276,12 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name StarredList
    * @request GET:/user/starred
    */
-  starredList = (query: { direction?: string; sort?: "created" | "updated" }, params: RequestParams = {}) =>
-    this.request<Gitignore, void>({
-      path: `/user/starred`,
+  starredList = (query: { direction?: string; sort?: "created" | "updated" }, params: AxiosRequestConfig = {}) =>
+    http.request<defs.Gitignore>({
+      url: `/user/starred`,
       method: "GET",
       query: query,
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -301,9 +290,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name StarredDelete
    * @request DELETE:/user/starred/{owner}/{repo}
    */
-  starredDelete = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/starred/${owner}/${repo}`,
+  starredDelete = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/starred/${owner}/${repo}`,
       method: "DELETE",
       ...params,
     });
@@ -313,9 +302,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name StarredDetail
    * @request GET:/user/starred/{owner}/{repo}
    */
-  starredDetail = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/starred/${owner}/${repo}`,
+  starredDetail = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/starred/${owner}/${repo}`,
       method: "GET",
       ...params,
     });
@@ -325,9 +314,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name StarredUpdate
    * @request PUT:/user/starred/{owner}/{repo}
    */
-  starredUpdate = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/starred/${owner}/${repo}`,
+  starredUpdate = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/starred/${owner}/${repo}`,
       method: "PUT",
       ...params,
     });
@@ -337,11 +326,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name SubscriptionsList
    * @request GET:/user/subscriptions
    */
-  subscriptionsList = (params: RequestParams = {}) =>
-    this.request<Repos, void>({
-      path: `/user/subscriptions`,
+  subscriptionsList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.Repos>({
+      url: `/user/subscriptions`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
   /**
@@ -351,9 +340,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @request DELETE:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsDelete = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/subscriptions/${owner}/${repo}`,
+  subscriptionsDelete = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/subscriptions/${owner}/${repo}`,
       method: "DELETE",
       ...params,
     });
@@ -364,9 +353,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @request GET:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsDetail = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/subscriptions/${owner}/${repo}`,
+  subscriptionsDetail = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/subscriptions/${owner}/${repo}`,
       method: "GET",
       ...params,
     });
@@ -377,9 +366,9 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @request PUT:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsUpdate = (owner: string, repo: string, params: RequestParams = {}) =>
-    this.request<void, void>({
-      path: `/user/subscriptions/${owner}/${repo}`,
+  subscriptionsUpdate = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
+    http.request<defs.void>({
+      url: `/user/subscriptions/${owner}/${repo}`,
       method: "PUT",
       ...params,
     });
@@ -389,11 +378,11 @@ export class User<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @name TeamsList
    * @request GET:/user/teams
    */
-  teamsList = (params: RequestParams = {}) =>
-    this.request<TeamsList, void>({
-      path: `/user/teams`,
+  teamsList = (params: AxiosRequestConfig = {}) =>
+    http.request<defs.TeamsList>({
+      url: `/user/teams`,
       method: "GET",
-      format: "json",
+      responseType: "json",
       ...params,
     });
 }

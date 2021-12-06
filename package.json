@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "swagger-typescript-api": "^9.3.1"
+    "swagger-typescript-api": "^9.3.1",
+    "@digitforce/saber-http": "^0.0.1"
   },
   "devDependencies": {
     "typescript": "^4.5.2"

@@ -9,13 +9,10 @@ const dataContracts = _.map(modelTypes, "name");
 /**
 <%~ dataContracts.join(", ") %>
 */
-<% if (config.httpClientType === config.constants.HTTP_CLIENT.AXIOS) { %> import { AxiosRequestConfig, AxiosResponse } from "axios"; <% } %>
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import { HttpClient, RequestParams, ContentType } from "./<%~ config.fileNames.httpClient %>";
-<% if (dataContracts.length) { %>
-import { <%~ dataContracts.join(", ") %>, saber } from "./<%~ config.fileNames.dataContracts %>"
-<% } %>
-<%~ %>
+import http from "@/utils/http";
+import defs from "./<%~ config.fileNames.dataContracts %>"
 /**
  * <%~ '获取 tag的描述' %>
  <% /* Here you can add some other JSDoc tags */ %>
@@ -23,15 +20,7 @@ import { <%~ dataContracts.join(", ") %>, saber } from "./<%~ config.fileNames.d
  * <%~ 'routeDocs.lines' %>
 
  */
-export class <%= apiClassName %><SecurityDataType = unknown><% if (!config.singleHttpClient) { %> extends HttpClient<SecurityDataType> <% } %> {
-<% if(config.singleHttpClient) { %>
-  http: HttpClient<SecurityDataType>;
-
-  constructor (http: HttpClient<SecurityDataType>) {
-    this.http = http;
-  }
-<% } %>
-
+export class <%= apiClassName %> {
     <% routes.forEach((route) => { %>
         <%~ includeFile('./procedure-call.eta', { ...it, route }) %>
     <% }) %>

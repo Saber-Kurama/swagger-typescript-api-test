@@ -26,7 +26,7 @@ const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
 const requestConfigParam = {
     name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
     optional: true,
-    type: "RequestParams",
+    type: "AxiosRequestConfig",
     defaultValue: "{}",
 }
 
@@ -107,13 +107,13 @@ const describeReturnType = () => {
 
  */
 <%~ route.routeName.usage %> = (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> =>
-    <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
-        path: `<%~ path %>`,
+    http.request<<%~ `defs.${type}` %>>({
+        url: `<%~ path %>`,
         method: '<%~ _.upperCase(method) %>',
         <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
         <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
         <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
         <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
-        <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
+        <%~ responseFormatTmpl ? `responseType: ${responseFormatTmpl},` : '' %>
         ...<%~ _.get(requestConfigParam, "name") %>,
     })
