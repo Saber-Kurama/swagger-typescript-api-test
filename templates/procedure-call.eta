@@ -5,6 +5,12 @@ const { TS_KEYWORDS } = constants;
 const { specificArgNameResolver } = route;
 const { _, getInlineParseContent, classNameCase } = utils;
 const { parameters, path, method, payload, query, formData, requestParams } = route.request;
+
+// TODO：这种方式其实是不对的，有可能出现 Record<string, DDD> 或者其他的情况
+const isTsType = (type) => {
+    const isType=  _.includes(_.values(TS_KEYWORDS), type);
+    return isType || type.startsWith('Record')
+}
 // parameters 参数
 // path 路径
 // payload body 中的参数
@@ -42,7 +48,9 @@ if(route.request.query){
     // console.log(route.request)
 }
 const _payload = payload;
-if( payload ) { _payload.type = `defs.${payload.type}` }
+if( payload && payload.type && !payload.type.startsWith('{') && !isTsType(type)) { 
+    _payload.type = `defs.${payload.type.replace(/(\(|\))/g, '')}` 
+}
 // extractRequestParams querey 和 pathParams 合并，没有的话 就不合并 
 const rawWrapperArgs =
     _.compact([
@@ -58,8 +66,8 @@ const rawWrapperArgs =
         } : null),
         _payload,
         requestConfigParam,
-    ]) 
-// console.log('rawWrapperArgs----', rawWrapperArgs);
+    ])
+
 const wrapperArgs = _
     // Sort by optionality
     .sortBy(rawWrapperArgs, [o => o.optional])
@@ -69,8 +77,8 @@ const wrapperArgs = _
 const bodyTmpl = _.get(payload, "name") || null;
 const queryTmpl = (query != null && queryName) || null;
 let requestType = type;
-if(!_.includes(_.values(TS_KEYWORDS), type)) {
-    requestType = `defs.${type}`;
+if(!isTsType(type)) {
+    requestType = `defs.${type.replace(/(\(|\))/g, '')}`;
 }
 %>
 /**

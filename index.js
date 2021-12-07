@@ -1,7 +1,7 @@
 /*
  * @Author: saber
  * @Date: 2021-12-03 15:48:13
- * @LastEditTime: 2021-12-07 21:30:05
+ * @LastEditTime: 2021-12-07 21:49:18
  * @LastEditors: saber
  * @Description:
  */
@@ -35,7 +35,7 @@ const createFile = ({ path, fileName, content, withPrefix }) =>
     () => {}
   );
 generateApi({
-  url: "http://localhost:5000/github-swagger.json",
+  url: "http://localhost:5000/another-example.json",
   name: "api.ts",
   // output: path.resolve(process.cwd(), './src/api'),
   output: false,
@@ -64,7 +64,14 @@ generateApi({
     onFormatRouteName: (routeInfo, templateRouteName) => {},
     onFormatTypeName: (typeName, rawTypeName) => {},
     onInit: (configuration) => {
-      // console.log('configuration', configuration)
+      // console.log('swaggerSchema', configuration.swaggerSchema)
+      // console.log('configuration', configuration.originalSchema)
+      // fileNames: {
+      //   dataContracts: 'data-contracts',
+      //   routeTypes: 'route-types',
+      //   httpClient: 'http-client',
+      //   outOfModuleApi: 'Common'
+      // },
       // TODO: 解决一下  tags 中文的问题
       return configuration;
     },
