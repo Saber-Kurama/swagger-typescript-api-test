@@ -1,7 +1,7 @@
 /*
  * @Author: saber
  * @Date: 2021-12-03 15:48:13
- * @LastEditTime: 2021-12-07 21:49:18
+ * @LastEditTime: 2021-12-07 22:26:58
  * @LastEditors: saber
  * @Description:
  */
@@ -77,7 +77,11 @@ generateApi({
     },
     onParseSchema: (originalSchema, parsedSchema) => {},
     onPrepareConfig: (currentConfiguration) => {
-      // console.log('currentConfiguration', currentConfiguration.modelTypes)
+      console.log('currentConfiguration', currentConfiguration.routes.combined)
+      const combined = currentConfiguration.routes.combined;
+      combined.forEach((com) => {
+        com.description = "测试安达市多"
+      })
       return currentConfiguration;
     },
   },

@@ -5,8 +5,28 @@ const { utils, routes } = it;
 // const apiClassName = classNameCase(route.moduleName);
 // const routes = route.routes;
 console.log('----routes', routes)
+const combineds = routes.combined || [];
+console.log('----combined', combineds)
 %>
 
+
+
+ /**
+ ----
+ <% combineds.forEach(function(user){ %>
+ 
+ <%= user %></li>
+  
+<% }) %>
+*/
+
 /**
- * 测试
+ *
  */
+ <% combineds.forEach(function(com) { %>
+ 
+  <%~ `import s from `%>
+ <% }) %>
+
+
+ 
