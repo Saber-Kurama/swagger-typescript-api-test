@@ -1,32 +1,24 @@
-
- <%
+<%
 const { utils, routes } = it;
-// const { classNameCase } = utils;
+const { classNameCase } = utils;
 // const apiClassName = classNameCase(route.moduleName);
 // const routes = route.routes;
 console.log('----routes', routes)
 const combineds = routes.combined || [];
 console.log('----combined', combineds)
+const num = 1;
 %>
 
-
-
- /**
- ----
- <% combineds.forEach(function(user){ %>
- 
- <%= user %></li>
-  
+<% combineds.forEach(function(com) { %>
+    import <%~com.moduleName%> from './mods/<%~ classNameCase(com.moduleName)%>';
 <% }) %>
-*/
-
-/**
- *
- */
- <% combineds.forEach(function(com) { %>
- 
-  <%~ `import s from `%>
- <% }) %>
-
+export default {
+    <% combineds.forEach(function(com) { %>
+    /**
+     * <%~ com.description || ''%> 
+     */
+    <%~com.moduleName%>,
+    <% }) %>
+}
 
  

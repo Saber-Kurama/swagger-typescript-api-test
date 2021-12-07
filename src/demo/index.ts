@@ -7,4 +7,3 @@ import api from "@/api";
  * @LastEditors: saber
  * @Description: 
  */
-api.emojis

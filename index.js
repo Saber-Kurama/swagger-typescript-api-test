@@ -34,6 +34,11 @@ const createFile = ({ path, fileName, content, withPrefix }) =>
     `${withPrefix ? filePrefix : ""}${content}`,
     () => {}
   );
+const findTag = (arr, name) => {
+  return arr.find((tag) => {
+    return tag.name === name
+  }) || {}
+}  
 generateApi({
   url: "http://localhost:5000/another-example.json",
   name: "api.ts",
@@ -77,10 +82,11 @@ generateApi({
     },
     onParseSchema: (originalSchema, parsedSchema) => {},
     onPrepareConfig: (currentConfiguration) => {
-      console.log('currentConfiguration', currentConfiguration.routes.combined)
+      console.log('currentConfiguration', currentConfiguration.config.swaggerSchema.tags)
+      const tags = currentConfiguration.config.swaggerSchema.tags || []; 
       const combined = currentConfiguration.routes.combined;
       combined.forEach((com) => {
-        com.description = "测试安达市多"
+        com.description = findTag(tags, com.moduleName).description || ''
       })
       return currentConfiguration;
     },
