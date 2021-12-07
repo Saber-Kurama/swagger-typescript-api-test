@@ -1,18 +1,20 @@
 <%
 const { utils, route, config } = it;
-const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
-const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
-const { parameters, path, method, payload, query, formData, security, requestParams } = route.request;
+const { constants } = config;
+const { TS_KEYWORDS } = constants;
+const { specificArgNameResolver } = route;
+const { _, getInlineParseContent, classNameCase } = utils;
+const { parameters, path, method, payload, query, formData, requestParams } = route.request;
 // parameters 参数
 // path 路径
 // payload body 中的参数
 // query // query
 // formData //
-// security
 // requestParams  这个是 path 和 query 的合并起来的数据, 这个是是只有query 和 path 都有的情况
-// pathParams path 参数 
-const { type, errorType, contentTypes } = route.response;
-const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
+// pathParams path 参数
+// console.log('payload', payload) 
+const { type } = route.response;
+const { RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
 // query
 const queryName = (query && query.name) || "query";
@@ -20,8 +22,12 @@ const queryName = (query && query.name) || "query";
 const pathParams = _.values(parameters);
 // 形成参数
 const pathParamsNames = _.map(pathParams, "name");
-
-const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
+const parsePathParams = (pathParamsArr) => {
+    const pathParamsStrArr = pathParamsArr.map((o) => {
+        return `${o.name}: ${o.type}`
+    })
+    return `{${pathParamsStrArr.join(', ')}}`
+} 
 
 const requestConfigParam = {
     name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
@@ -33,31 +39,26 @@ const requestConfigParam = {
 const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
 // console.log('path', route.request)
 if(route.request.query){
-    console.log(route.request)
+    // console.log(route.request)
 }
-if(path === '/legacy/repos/search/${keyword}') {
-// console.log('route.request', route.request)
-// console.log('requestParams', requestParams && _.get(requestParams, "schemas"))
-// console.log('getInlineParseContent(requestParams)', requestParams && getInlineParseContent(requestParams))
-}
+const _payload = payload;
+if( payload ) { _payload.type = `defs.${payload.type}` }
 // extractRequestParams querey 和 pathParams 合并，没有的话 就不合并 
-const rawWrapperArgs = config.extractRequestParams ?
+const rawWrapperArgs =
     _.compact([
         requestParams && {
           name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
           optional: false,
-          type: getInlineParseContent(requestParams),
+          type: `${getInlineParseContent(requestParams)} | ${classNameCase(route.routeName.usage)}_`,
         },
-        ...(!requestParams ? pathParams : []),
-        payload,
+        (!requestParams && pathParams.length ? {
+          name: `{ ${_.join(pathParamsNames, ", ")} }`,
+          optional: false,
+          type: `${parsePathParams(pathParams)} | ${classNameCase(route.routeName.usage)}_`,
+        } : null),
+        _payload,
         requestConfigParam,
-    ]) :
-    _.compact([
-        ...pathParams,
-        query,
-        payload,
-        requestConfigParam,
-    ])
+    ]) 
 // console.log('rawWrapperArgs----', rawWrapperArgs);
 const wrapperArgs = _
     // Sort by optionality
@@ -65,38 +66,12 @@ const wrapperArgs = _
     .map(argToTmpl)
     .join(', ')
 
-// RequestParams["type"]
-const requestContentKind = {
-    "JSON": "ContentType.Json",
-    "URL_ENCODED": "ContentType.UrlEncoded",
-    "FORM_DATA": "ContentType.FormData",
-}
-// RequestParams["format"]
-const responseContentKind = {
-    "JSON": '"json"',
-    "IMAGE": '"blob"',
-    "FORM_DATA": isFetchTemplate ? '"formData"' : '"document"'
-}
-
 const bodyTmpl = _.get(payload, "name") || null;
 const queryTmpl = (query != null && queryName) || null;
-const bodyContentKindTmpl = requestContentKind[requestBodyInfo.contentKind] || null;
-const responseFormatTmpl = responseContentKind[responseBodyInfo.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind] || null;
-const securityTmpl = security ? 'true' : null;
-
-const describeReturnType = () => {
-    if (!config.toJS) return "";
-
-    switch(config.httpClientType) {
-        case HTTP_CLIENT.AXIOS: {
-          return `Promise<AxiosResponse<${type}>>`
-        }
-        default: {
-          return `Promise<HttpResponse<${type}, ${errorType}>`
-        }
-    }
+let requestType = type;
+if(!_.includes(_.values(TS_KEYWORDS), type)) {
+    requestType = `defs.${type}`;
 }
-// console.log('route.routeName.usage', wrapperArgs)
 %>
 /**
 <%~ routeDocs.description %>
@@ -106,14 +81,11 @@ const describeReturnType = () => {
 <%~ routeDocs.lines %>
 
  */
-<%~ route.routeName.usage %> = (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> =>
-    http.request<<%~ `defs.${type}` %>>({
+<%~ route.routeName.usage %> = (<%~ wrapperArgs %>) =>
+    http.request<<%~ `${requestType}` %>>({
         url: `<%~ path %>`,
         method: '<%~ _.upperCase(method) %>',
-        <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
-        <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
-        <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
-        <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
-        <%~ responseFormatTmpl ? `responseType: ${responseFormatTmpl},` : '' %>
+        <%~ queryTmpl ? `params: ${queryTmpl},` : '' %>
+        <%~ bodyTmpl ? `data: ${bodyTmpl},` : '' %>
         ...<%~ _.get(requestConfigParam, "name") %>,
     })

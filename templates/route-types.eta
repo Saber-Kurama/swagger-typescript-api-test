@@ -1,3 +1,4 @@
+asdasd
 <%
 const { utils, config, route, modelTypes } = it;
 const { _, classNameCase } = utils;

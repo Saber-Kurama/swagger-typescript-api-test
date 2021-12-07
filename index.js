@@ -1,7 +1,7 @@
 /*
  * @Author: saber
  * @Date: 2021-12-03 15:48:13
- * @LastEditTime: 2021-12-06 10:11:50
+ * @LastEditTime: 2021-12-07 18:05:16
  * @LastEditors: saber
  * @Description: 
  */
@@ -12,9 +12,11 @@ generateApi({
   url: 'http://localhost:5000/github-swagger.json',
   name: "MySuperbApi.ts",
   output: path.resolve(process.cwd(), './src/api'),
+  // output: false,
   templates: path.resolve(process.cwd(), './templates'),
   httpClientType: "axios",
   modular: true,
+  generateRouteTypes: false,
   defaultResponseType: "void",
   moduleNameFirstTag: true,
   extractRequestParams: true, // path 和 query 合并
@@ -45,4 +47,10 @@ generateApi({
       return currentConfiguration;
     }
   }
+}).then(({ files, configuration }) => {
+  // console.log('files', files)
+  // files.forEach(({ content, name }) => {
+  //   fs.writeFile(path, content);
+  // });
 })
+.catch(e => console.error(e))

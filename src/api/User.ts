@@ -9,17 +9,148 @@
  * ---------------------------------------------------------------
  */
 
-// 自定义的api
-/**
-Actor, Asset, AssetPatch, Assets, Assignees, Blob, Blobs, Branch, Branches, CodeFrequencyStats, Comment, CommentBody, Comments, Commit, CommitActivityStats, CommitComment, CommitCommentBody, Commits, CompareCommits, ContentsPath, ContributorsStats, CreateFile, CreateFileBody, DeleteFile, DeleteFileBody, Deployment, DeploymentResp, DeploymentStatuses, DeploymentStatusesCreate, Download, Downloads, EditTeam, EmailsPost, Emojis, Event, Events, Feeds, ForkBody, Forks, Gist, Gists, GitCommit, GitRefPatch, Gitignore, GitignoreLang, HeadBranch, Hook, HookBody, Issue, IssueEvent, IssueEvents, Issues, IssuesComment, IssuesComments, Keys, Label, Labels, Languages, Markdown, Merge, MergePullBody, MergesBody, MergesConflict, MergesSuccessful, Meta, Milestone, MilestoneUpdate, NotificationMarkRead, Notifications, OrgTeamsPost, Organization, OrganizationAsTeamMember, ParticipationStats, PatchGist, PatchOrg, PostGist, PostRepo, PullRequest, PullUpdate, Pulls, PullsComment, PullsCommentPost, PullsComments, PullsPost, PutSubscription, RateLimit, Ref, RefStatus, Refs, RefsBody, Release, ReleaseCreate, Releases, Repo, RepoDeployments, RepoComments, RepoCommit, RepoCommitBody, RepoEdit, Repos, SearchCode, SearchIssues, SearchIssuesByKeyword, SearchRepositories, SearchRepositoriesByKeyword, SearchUserByEmail, SearchUsers, SearchUsersByKeyword, Subscription, SubscriptionBody, Tag, TagBody, Tags, Team, TeamMembership, TeamRepos, Teams, TeamsList, Tree, Trees, User, UserEmails, UserKeysKeyId, UserKeysPost, UserUpdate, Users*/
 import http from "@/utils/http";
 import { AxiosRequestConfig } from "axios";
-import defs from "./data-contracts";
 
 /**
- * 获取 tag的描述
- * routeDocs.lines
- */
+ * 获取 tag的描述  routeDocs.lines */
+export interface FollowingDelete_ {
+  /**
+   * @description Name of user.
+   */
+  username: string;
+}
+export interface FollowingDetail_ {
+  /**
+   * @description Name of user.
+   */
+  username: string;
+}
+export interface FollowingUpdate_ {
+  /**
+   * @description Name of user.
+   */
+  username: string;
+}
+export interface IssuesList_ {
+  /**
+ * @description Issues assigned to you / created by you / mentioning you / you're
+subscribed to updates for / All issues the authenticated user can see
+
+*/
+  filter: "assigned" | "created" | "mentioned" | "subscribed" | "all";
+  /**
+   * @description
+   */
+  state: "open" | "closed";
+  /**
+   * @description String list of comma separated Label names. Example - bug,ui,@high.
+   */
+  labels: string;
+  /**
+   * @description
+   */
+  sort: "created" | "updated" | "comments";
+  /**
+   * @description
+   */
+  direction: "asc" | "desc";
+  /**
+ * @description Optional string of a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ.
+Only issues updated at or after this time are returned.
+
+*/
+  since?: string;
+}
+export interface KeysDelete_ {
+  /**
+   * @description ID of key.
+   */
+  keyId: number;
+}
+export interface KeysDetail_ {
+  /**
+   * @description ID of key.
+   */
+  keyId: number;
+}
+export interface ReposList_ {
+  /**
+   * @description
+   */
+  type?: "all" | "public" | "private" | "forks" | "sources" | "member";
+}
+export interface StarredList_ {
+  /**
+   * @description Ignored without 'sort' parameter.
+   */
+  direction?: string;
+  /**
+   * @description
+   */
+  sort?: "created" | "updated";
+}
+export interface StarredDelete_ {
+  /**
+   * @description Name of a repository owner.
+   */
+  owner: string;
+  /**
+   * @description Name of a repository.
+   */
+  repo: string;
+}
+export interface StarredDetail_ {
+  /**
+   * @description Name of a repository owner.
+   */
+  owner: string;
+  /**
+   * @description Name of a repository.
+   */
+  repo: string;
+}
+export interface StarredUpdate_ {
+  /**
+   * @description Name of a repository owner.
+   */
+  owner: string;
+  /**
+   * @description Name of a repository.
+   */
+  repo: string;
+}
+export interface SubscriptionsDelete_ {
+  /**
+   * @description Name of the owner.
+   */
+  owner: string;
+  /**
+   * @description Name of repository.
+   */
+  repo: string;
+}
+export interface SubscriptionsDetail_ {
+  /**
+   * @description Name of the owner.
+   */
+  owner: string;
+  /**
+   * @description Name of repository.
+   */
+  repo: string;
+}
+export interface SubscriptionsUpdate_ {
+  /**
+   * @description Name of the owner.
+   */
+  owner: string;
+  /**
+   * @description Name of repository.
+   */
+  repo: string;
+}
+
 export class User {
   /**
    * @description Get the authenticated user.
@@ -27,12 +158,11 @@ export class User {
    * @name UserList
    * @request GET:/user
    */
-  userList = (params: AxiosRequestConfig = {}) =>
+  userList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.User>({
       url: `/user`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Update the authenticated user.
@@ -40,14 +170,12 @@ export class User {
    * @name UserPartialUpdate
    * @request PATCH:/user
    */
-  userPartialUpdate = (body: UserUpdate, params: AxiosRequestConfig = {}) =>
+  userPartialUpdate = (body: defs.UserUpdate, requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.User>({
       url: `/user`,
       method: "PATCH",
-      body: body,
-      type: ContentType.Json,
-      responseType: "json",
-      ...params,
+      data: body,
+      ...requestParams,
     });
   /**
    * @description Delete email address(es). You can include a single email address or an array of addresses.
@@ -55,13 +183,12 @@ export class User {
    * @name EmailsDelete
    * @request DELETE:/user/emails
    */
-  emailsDelete = (body: UserEmails, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  emailsDelete = (body: defs.UserEmails, requestParams: AxiosRequestConfig = {}) =>
+    http.request<void>({
       url: `/user/emails`,
       method: "DELETE",
-      body: body,
-      type: ContentType.Json,
-      ...params,
+      data: body,
+      ...requestParams,
     });
   /**
    * @description List email addresses for a user. In the final version of the API, this method will return an array of hashes with extended information for each email address indicating if the address has been verified and if it's primary email address for GitHub. Until API v3 is finalized, use the application/vnd.github.v3 media type to get other response format.
@@ -69,11 +196,11 @@ export class User {
    * @name EmailsList
    * @request GET:/user/emails
    */
-  emailsList = (params: AxiosRequestConfig = {}) =>
+  emailsList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.UserEmails>({
       url: `/user/emails`,
       method: "GET",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Add email address(es). You can post a single email address or an array of addresses.
@@ -81,12 +208,12 @@ export class User {
    * @name EmailsCreate
    * @request POST:/user/emails
    */
-  emailsCreate = (body: EmailsPost, params: AxiosRequestConfig = {}) =>
-    http.request<defs.any>({
+  emailsCreate = (body: defs.EmailsPost, requestParams: AxiosRequestConfig = {}) =>
+    http.request<any>({
       url: `/user/emails`,
       method: "POST",
-      body: body,
-      ...params,
+      data: body,
+      ...requestParams,
     });
   /**
    * @description List the authenticated user's followers
@@ -94,12 +221,11 @@ export class User {
    * @name FollowersList
    * @request GET:/user/followers
    */
-  followersList = (params: AxiosRequestConfig = {}) =>
+  followersList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Users>({
       url: `/user/followers`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List who the authenticated user is following.
@@ -107,12 +233,11 @@ export class User {
    * @name FollowingList
    * @request GET:/user/following
    */
-  followingList = (params: AxiosRequestConfig = {}) =>
+  followingList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Users>({
       url: `/user/following`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Unfollow a user. Unfollowing a user requires the user to be logged in and authenticated with basic auth or OAuth with the user:follow scope.
@@ -120,11 +245,11 @@ export class User {
    * @name FollowingDelete
    * @request DELETE:/user/following/{username}
    */
-  followingDelete = (username: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  followingDelete = ({ username }: { username: string } | FollowingDelete_, requestParams: AxiosRequestConfig = {}) =>
+    http.request<void>({
       url: `/user/following/${username}`,
       method: "DELETE",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Check if you are following a user.
@@ -132,11 +257,11 @@ export class User {
    * @name FollowingDetail
    * @request GET:/user/following/{username}
    */
-  followingDetail = (username: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  followingDetail = ({ username }: { username: string } | FollowingDetail_, requestParams: AxiosRequestConfig = {}) =>
+    http.request<void>({
       url: `/user/following/${username}`,
       method: "GET",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Follow a user. Following a user requires the user to be logged in and authenticated with basic auth or OAuth with the user:follow scope.
@@ -144,11 +269,11 @@ export class User {
    * @name FollowingUpdate
    * @request PUT:/user/following/{username}
    */
-  followingUpdate = (username: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  followingUpdate = ({ username }: { username: string } | FollowingUpdate_, requestParams: AxiosRequestConfig = {}) =>
+    http.request<void>({
       url: `/user/following/${username}`,
       method: "PUT",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List issues. List all issues across owned and member repositories for the authenticated user.
@@ -157,22 +282,23 @@ export class User {
    * @request GET:/user/issues
    */
   issuesList = (
-    query: {
-      filter: "assigned" | "created" | "mentioned" | "subscribed" | "all";
-      state: "open" | "closed";
-      labels: string;
-      sort: "created" | "updated" | "comments";
-      direction: "asc" | "desc";
-      since?: string;
-    },
-    params: AxiosRequestConfig = {},
+    query:
+      | {
+          filter: "assigned" | "created" | "mentioned" | "subscribed" | "all";
+          state: "open" | "closed";
+          labels: string;
+          sort: "created" | "updated" | "comments";
+          direction: "asc" | "desc";
+          since?: string;
+        }
+      | IssuesList_,
+    requestParams: AxiosRequestConfig = {},
   ) =>
     http.request<defs.Issues>({
       url: `/user/issues`,
       method: "GET",
-      query: query,
-      responseType: "json",
-      ...params,
+      params: query,
+      ...requestParams,
     });
   /**
    * @description List your public keys. Lists the current user's keys. Management of public keys via the API requires that you are authenticated through basic auth, or OAuth with the 'user', 'write:public_key' scopes.
@@ -180,12 +306,11 @@ export class User {
    * @name KeysList
    * @request GET:/user/keys
    */
-  keysList = (params: AxiosRequestConfig = {}) =>
+  keysList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Gitignore>({
       url: `/user/keys`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Create a public key.
@@ -193,13 +318,12 @@ export class User {
    * @name KeysCreate
    * @request POST:/user/keys
    */
-  keysCreate = (body: UserKeysPost, params: AxiosRequestConfig = {}) =>
+  keysCreate = (body: defs.UserKeysPost, requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.UserKeysKeyId>({
       url: `/user/keys`,
       method: "POST",
-      body: body,
-      responseType: "json",
-      ...params,
+      data: body,
+      ...requestParams,
     });
   /**
    * @description Delete a public key. Removes a public key. Requires that you are authenticated via Basic Auth or via OAuth with at least admin:public_key scope.
@@ -207,11 +331,11 @@ export class User {
    * @name KeysDelete
    * @request DELETE:/user/keys/{keyId}
    */
-  keysDelete = (keyId: number, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  keysDelete = ({ keyId }: { keyId: number } | KeysDelete_, requestParams: AxiosRequestConfig = {}) =>
+    http.request<void>({
       url: `/user/keys/${keyId}`,
       method: "DELETE",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Get a single public key.
@@ -219,12 +343,11 @@ export class User {
    * @name KeysDetail
    * @request GET:/user/keys/{keyId}
    */
-  keysDetail = (keyId: number, params: AxiosRequestConfig = {}) =>
+  keysDetail = ({ keyId }: { keyId: number } | KeysDetail_, requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.UserKeysKeyId>({
       url: `/user/keys/${keyId}`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List public and private organizations for the authenticated user.
@@ -232,12 +355,11 @@ export class User {
    * @name OrgsList
    * @request GET:/user/orgs
    */
-  orgsList = (params: AxiosRequestConfig = {}) =>
+  orgsList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Gitignore>({
       url: `/user/orgs`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List repositories for the authenticated user. Note that this does not include repositories owned by organizations which the user can access. You can lis user organizations and list organization repositories separately.
@@ -246,15 +368,14 @@ export class User {
    * @request GET:/user/repos
    */
   reposList = (
-    query: { type?: "all" | "public" | "private" | "forks" | "sources" | "member" },
-    params: AxiosRequestConfig = {},
+    query: { type?: "all" | "public" | "private" | "forks" | "sources" | "member" } | ReposList_,
+    requestParams: AxiosRequestConfig = {},
   ) =>
     http.request<defs.Repos>({
       url: `/user/repos`,
       method: "GET",
-      query: query,
-      responseType: "json",
-      ...params,
+      params: query,
+      ...requestParams,
     });
   /**
    * @description Create a new repository for the authenticated user. OAuth users must supply repo scope.
@@ -262,13 +383,12 @@ export class User {
    * @name ReposCreate
    * @request POST:/user/repos
    */
-  reposCreate = (body: PostRepo, params: AxiosRequestConfig = {}) =>
+  reposCreate = (body: defs.PostRepo, requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Repos>({
       url: `/user/repos`,
       method: "POST",
-      body: body,
-      responseType: "json",
-      ...params,
+      data: body,
+      ...requestParams,
     });
   /**
    * @description List repositories being starred by the authenticated user.
@@ -276,13 +396,15 @@ export class User {
    * @name StarredList
    * @request GET:/user/starred
    */
-  starredList = (query: { direction?: string; sort?: "created" | "updated" }, params: AxiosRequestConfig = {}) =>
+  starredList = (
+    query: { direction?: string; sort?: "created" | "updated" } | StarredList_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
     http.request<defs.Gitignore>({
       url: `/user/starred`,
       method: "GET",
-      query: query,
-      responseType: "json",
-      ...params,
+      params: query,
+      ...requestParams,
     });
   /**
    * @description Unstar a repository
@@ -290,11 +412,14 @@ export class User {
    * @name StarredDelete
    * @request DELETE:/user/starred/{owner}/{repo}
    */
-  starredDelete = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  starredDelete = (
+    { owner, repo }: { owner: string; repo: string } | StarredDelete_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/starred/${owner}/${repo}`,
       method: "DELETE",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Check if you are starring a repository.
@@ -302,11 +427,14 @@ export class User {
    * @name StarredDetail
    * @request GET:/user/starred/{owner}/{repo}
    */
-  starredDetail = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  starredDetail = (
+    { owner, repo }: { owner: string; repo: string } | StarredDetail_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/starred/${owner}/${repo}`,
       method: "GET",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Star a repository.
@@ -314,11 +442,14 @@ export class User {
    * @name StarredUpdate
    * @request PUT:/user/starred/{owner}/{repo}
    */
-  starredUpdate = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  starredUpdate = (
+    { owner, repo }: { owner: string; repo: string } | StarredUpdate_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/starred/${owner}/${repo}`,
       method: "PUT",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List repositories being watched by the authenticated user.
@@ -326,12 +457,11 @@ export class User {
    * @name SubscriptionsList
    * @request GET:/user/subscriptions
    */
-  subscriptionsList = (params: AxiosRequestConfig = {}) =>
+  subscriptionsList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.Repos>({
       url: `/user/subscriptions`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Stop watching a repository
@@ -340,11 +470,14 @@ export class User {
    * @request DELETE:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsDelete = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  subscriptionsDelete = (
+    { owner, repo }: { owner: string; repo: string } | SubscriptionsDelete_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/subscriptions/${owner}/${repo}`,
       method: "DELETE",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Check if you are watching a repository.
@@ -353,11 +486,14 @@ export class User {
    * @request GET:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsDetail = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  subscriptionsDetail = (
+    { owner, repo }: { owner: string; repo: string } | SubscriptionsDetail_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/subscriptions/${owner}/${repo}`,
       method: "GET",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description Watch a repository.
@@ -366,11 +502,14 @@ export class User {
    * @request PUT:/user/subscriptions/{owner}/{repo}
    * @deprecated
    */
-  subscriptionsUpdate = (owner: string, repo: string, params: AxiosRequestConfig = {}) =>
-    http.request<defs.void>({
+  subscriptionsUpdate = (
+    { owner, repo }: { owner: string; repo: string } | SubscriptionsUpdate_,
+    requestParams: AxiosRequestConfig = {},
+  ) =>
+    http.request<void>({
       url: `/user/subscriptions/${owner}/${repo}`,
       method: "PUT",
-      ...params,
+      ...requestParams,
     });
   /**
    * @description List all of the teams across all of the organizations to which the authenticated user belongs. This method requires user or repo scope when authenticating via OAuth.
@@ -378,11 +517,12 @@ export class User {
    * @name TeamsList
    * @request GET:/user/teams
    */
-  teamsList = (params: AxiosRequestConfig = {}) =>
+  teamsList = (requestParams: AxiosRequestConfig = {}) =>
     http.request<defs.TeamsList>({
       url: `/user/teams`,
       method: "GET",
-      responseType: "json",
-      ...params,
+      ...requestParams,
     });
 }
+
+export default new User();

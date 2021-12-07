@@ -1,0 +1,61 @@
+<%
+const { utils, route, config } = it;
+const { specificArgNameResolver } = route;
+const { _, getInlineParseContent, parseSchema, classNameCase } = utils;
+const { parameters, path, method, payload, query, formData, requestParams } = route.request;
+
+const { type } = route.response;
+const { RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
+const routeDocs = includeFile("@base/route-docs", { config, route, utils });
+// query
+const queryName = (query && query.name) || "query";
+// pathParams 来自 parameters 看起来是和 pathParams 一样 
+const pathParams = _.values(parameters);
+// 形成参数
+const pathParamsNames = _.map(pathParams, "name");
+const parsePathParamsDes = (pathParamsArr) => {
+    return pathParamsArr.map((o, index) => {
+        return ['/**', ` * @description ${o.description || ''}`, '*/', `${o.name}: ${o.type}`].join('\n');
+    }).join(',\n')
+} 
+let requestParamsDescription = ''; 
+if(requestParams){
+  let requestParamsStrArr = getInlineParseContent(requestParams).replace(/({ | })/g, '').split(',')
+  requestParamsDescription = parseSchema(requestParams).content.map((content, index) => {
+    return ['/**', ` * @description ${content.description || ''}`, '*/', requestParamsStrArr[index]].join('\n')
+  }).join(',\n')
+}
+let pathParamsDescription = '';
+if(!requestParams && pathParams.length){
+  pathParamsDescription = parsePathParamsDes(pathParams);
+}
+
+const requestConfigParam = {
+    name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
+    optional: true,
+    type: "AxiosRequestConfig",
+    defaultValue: "{}",
+}
+
+const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
+
+
+
+const bodyTmpl = _.get(payload, "name") || null;
+if(bodyTmpl){
+// console.log('payload', payload)
+// console.log('bodyTmpl-----', bodyTmpl)
+}
+
+const queryTmpl = (query != null && queryName) || null;
+%>
+<% if (requestParams) { %>
+export interface <%~ classNameCase(route.routeName.usage) %>_ {
+  <%~ requestParamsDescription %> 
+}
+<% } %>
+<% if (!requestParams && pathParams.length) { %>
+export interface <%~ classNameCase(route.routeName.usage) %>_ {
+  <%~ pathParamsDescription %> 
+}
+<% } %>
