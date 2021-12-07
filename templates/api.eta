@@ -9,12 +9,11 @@ import http from "@/utils/http";
 
 /**
  * <%~ '获取 tag的描述' %>
- <% /* Here you can add some other JSDoc tags */ %>
- <%~ 'routeDocs.lines' %>
+
+ * <%~ 'routeDocs.lines' %>
+ 
  */
- <%
-     // 这里需要提示 params 的生成
- %>
+ 
  <% routes.forEach((route) => { %>
     <%~ includeFile('./params.eta', { ...it, route }) %>
  <% }) %>   

@@ -1,7 +1,7 @@
 /*
  * @Author: saber
  * @Date: 2021-12-03 15:48:13
- * @LastEditTime: 2021-12-07 21:12:54
+ * @LastEditTime: 2021-12-07 21:30:05
  * @LastEditors: saber
  * @Description:
  */
@@ -36,7 +36,7 @@ const createFile = ({ path, fileName, content, withPrefix }) =>
   );
 generateApi({
   url: "http://localhost:5000/github-swagger.json",
-  name: "MySuperbApi.ts",
+  name: "api.ts",
   // output: path.resolve(process.cwd(), './src/api'),
   output: false,
   templates: path.resolve(process.cwd(), "./templates"),
@@ -46,6 +46,7 @@ generateApi({
   defaultResponseType: "void",
   moduleNameFirstTag: true,
   extractRequestParams: true, // path 和 query 合并
+  extraTemplates: [{'name': 'index', path: path.resolve(process.cwd(), "./templates", './index.eta')}],
   hooks: {
     onCreateComponent: (component) => {
       // console.log('component----', component)
@@ -77,6 +78,7 @@ generateApi({
   .then(({ files, configuration }) => {
     // console.log('files', files)
     const output = path.resolve(process.cwd(), './src/api');
+    const outputMods = path.resolve(process.cwd(), './src/api/mods');
     const cleanOutput = true;
     
     if (pathIsExist(output)) {
@@ -86,15 +88,36 @@ generateApi({
     } else {
       createDir(output);
     }
+    if (pathIsExist(outputMods)) {
+      if (cleanOutput) {
+        cleanDir(outputMods);
+      }
+    } else {
+      createDir(outputMods);
+    }
     files.forEach(({ content, name }) => {
       if(name === 'http-client.ts'){
         return;
       }
       if(name === 'data-contracts.ts'){
         name = 'data.d.ts'
+        return createFile({
+          path: output,
+          fileName: name,
+          content,
+          withPrefix: false,
+        });
       }
-      createFile({
-        path: path.resolve(process.cwd(), './src/api'),
+      if(name === 'index.ts'){
+        return createFile({
+          path: output,
+          fileName: name,
+          content,
+          withPrefix: false,
+        }); 
+      }
+      return createFile({
+        path: outputMods,
         fileName: name,
         content,
         withPrefix: false,
